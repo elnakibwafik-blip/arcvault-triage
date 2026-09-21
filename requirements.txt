@@ -1,1 +1,2 @@
 jsonschema>=4.20
+pillow>=10  # only for scripts/render_screenshots.py
