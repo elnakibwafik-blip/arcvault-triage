@@ -56,6 +56,8 @@ The LLM classifies, extracts and summarises. Code decides routing and escalation
    ```
    Each record also arrives at Webhook.site under `/<destination_queue>`.
 
+   To send your own message: `python scripts/send_samples.py --message "Our whole team is locked out since 9am" --source email`. On Windows PowerShell, prefer this over `curl.exe -d "{\"...\"}"`: PowerShell 5.1 strips the escaped quotes and the JSON breaks.
+
 5. **Evaluate (optional, about 25 minutes because of free-tier rate limits)**
    ```
    python scripts/eval.py --runs 3           # writes output/eval_report.md

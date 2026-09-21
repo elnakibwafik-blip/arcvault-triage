@@ -6,6 +6,7 @@ This is also the demo script.
     python scripts/send_samples.py              # the 5 brief samples
     python scripts/send_samples.py --edge       # plus the 8 edge cases
     python scripts/send_samples.py --only S5    # a single sample
+    python scripts/send_samples.py --message "Our whole team is locked out" --source email
 """
 import argparse
 import json
@@ -46,16 +47,22 @@ def main():
     ap.add_argument("--delay", type=float, default=45.0,
                     help="seconds between messages (Groq free tier: 8k tokens/min, ~6k per message)")
     ap.add_argument("--quiet", action="store_true", help="one line per record instead of full JSON")
+    ap.add_argument("--message", help="send this ad-hoc text instead of the test set")
+    ap.add_argument("--source", default="email", choices=["email", "web_form", "support_portal"],
+                    help="source channel for --message")
     args = ap.parse_args()
 
     load_env()
     url = os.environ.get("N8N_WEBHOOK_URL")
     if not url:
         sys.exit("N8N_WEBHOOK_URL missing in .env (the Production URL from the Webhook node)")
-    golden = load_json("tests/golden.json")
-    cases = golden["samples"] + (golden["edge_cases"] if args.edge else [])
-    if args.only:
-        cases = [c for c in cases if c["id"].startswith(args.only)]
+    if args.message is not None:
+        cases = [{"id": "ADHOC", "source": args.source, "message": args.message}]
+    else:
+        golden = load_json("tests/golden.json")
+        cases = golden["samples"] + (golden["edge_cases"] if args.edge else [])
+        if args.only:
+            cases = [c for c in cases if c["id"].startswith(args.only)]
 
     OUT.parent.mkdir(exist_ok=True)
     for i, case in enumerate(cases):

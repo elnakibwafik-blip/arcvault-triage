@@ -61,15 +61,25 @@ A record goes to `human_review_escalation` if **any** rule fires. Every rule tha
 - Summary failure falls back to a deterministic template, so the field is never empty.
 - Hallucinated identifiers are dropped and listed in `dropped_identifiers`.
 
-## 5. At production scale
+## 5. Evaluation results
+
+Full table: [output/eval_report.md](../output/eval_report.md). I ran the 5 samples 3 times and the 8 edge cases once, against the live workflow, with prompts at v2.
+
+- **5 samples: 15/15 runs match my pre-written expectations.** Category, priority, destination and escalation were **identical across all 3 runs**, and so was confidence (0.94/0.94/0.95/0.94/0.96). That's expected at temperature 0; it shows the output is repeatable, not that it's correct.
+- **Edge cases: 6/8 pass.** Prompt injection was ignored (E3). French was classified correctly and escalated by the language-independent `incident_category` rule, since the English keywords didn't match (E4). Multi-intent was escalated (E1). An empty message was escalated without calling the classifier (E7). The long email was handled correctly (E8).
+- **Failure 1, E2 "it's broken again":** Bug Report with confidence **0.78**, so it went to engineering without escalation. The same prompt family gave 0.62 in v1 testing, so the v2 changes moved confidence on a message they weren't aimed at. That is the clearest evidence here that self-reported confidence can't carry the fallback on its own.
+- **Failure 2, E5 angry $45 billing:** High priority, driven by tone. It's still routed correctly (billing, not escalated). See CHANGELOG_PROMPTS.md.
+- Latency inside n8n: median 2.0 s, max 4.1 s for the 3 LLM calls, measured by the workflow itself. It's about 4 s end to end from the client.
+
+## 6. At production scale
 
 - **Reliability:** put a durable queue (SQS, Pub/Sub or Redis Streams) in front of n8n so a burst or an n8n restart doesn't lose messages, with a dead-letter queue for records that fail twice. Deduplicate on a hash of source, sender and normalised text, since email clients and webhooks retry. Use exponential backoff that respects the provider's `retry-after`. Webhook.site would be replaced by the ticketing system's API, with idempotency keys.
 - **Cost:** about 6k tokens per message across 3 calls. Merge classification and enrichment into one call (it sends the message once and drops one system prompt; my rough estimate is 30–40% fewer tokens, not measured), use a smaller model for classification once an eval set shows it's accurate enough, cache the static system prompts (prompt caching), and skip the summary LLM for categories where a template is enough.
-- **Latency:** about 4 s end to end today. Classification and enrichment are independent, so they can run in parallel (about 1 s saved). A paid tier removes the 8k tokens/minute ceiling, which is the real bottleneck now.
+- **Latency:** 2.0 s median inside n8n and about 4 s end to end today. Classification and enrichment are independent, so they can run in parallel (about 1 s saved). A paid tier removes the 8k tokens/minute ceiling, which is the real bottleneck now.
 - **Observability:** log per-rule escalation rates, the category distribution, `llm_failure` rate, latency percentiles and token spend. A sudden jump in the escalation rate or in one category is the first sign of model drift or an outage.
 - **Privacy:** customer messages go to a third-party LLM. For production I'd mask emails and phone numbers before the call, check the provider's data-retention terms, and set a retention period for n8n execution history, which stores the full text.
 
-## 6. Phase 2 (one more week)
+## 7. Phase 2 (one more week)
 
 1. **Real ingestion:** Gmail/IMAP trigger and the support portal's API, including sender and account lookup so records carry a customer ID, not just what's in the text.
 2. **Ticketing integration:** create Jira/Zendesk tickets in the destination queue, with the summary as the description and the escalation reasons as a comment.
