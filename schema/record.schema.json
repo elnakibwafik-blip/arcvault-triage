@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arcvault.example/schema/record.schema.json",
+  "title": "ArcVault triage record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["record_id", "received_at", "source", "raw_message", "classification", "enrichment", "routing", "escalation", "summary", "processing"],
+  "properties": {
+    "record_id": {"type": "string", "format": "uuid"},
+    "received_at": {"type": "string", "format": "date-time"},
+    "source": {"enum": ["email", "web_form", "support_portal", "unknown"]},
+    "raw_message": {"type": "string"},
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "priority", "llm_priority", "priority_adjusted_by", "confidence", "rationale"],
+      "properties": {
+        "category": {"enum": ["Bug Report", "Feature Request", "Billing Issue", "Technical Question", "Incident/Outage", null]},
+        "priority": {"enum": ["Low", "Medium", "High"], "description": "Final priority after deterministic adjustments"},
+        "llm_priority": {"enum": ["Low", "Medium", "High", null], "description": "Priority as returned by the LLM"},
+        "priority_adjusted_by": {"type": ["string", "null"]},
+        "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "rationale": {"type": "string"}
+      }
+    },
+    "enrichment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["core_issue", "identifiers", "urgency_signal"],
+      "properties": {
+        "core_issue": {"type": "string"},
+        "identifiers": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["account_ids", "invoice_numbers", "error_codes", "urls", "monetary_amounts", "products_or_features", "other"],
+          "properties": {
+            "account_ids": {"$ref": "#/$defs/strlist"},
+            "invoice_numbers": {"$ref": "#/$defs/strlist"},
+            "error_codes": {"$ref": "#/$defs/strlist"},
+            "urls": {"$ref": "#/$defs/strlist"},
+            "monetary_amounts": {"$ref": "#/$defs/strlist"},
+            "products_or_features": {"$ref": "#/$defs/strlist"},
+            "other": {"$ref": "#/$defs/strlist"}
+          }
+        },
+        "dropped_identifiers": {"$ref": "#/$defs/strlist", "description": "Values the LLM returned that do not appear literally in the message (removed)"},
+        "urgency_signal": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["level", "evidence"],
+          "properties": {
+            "level": {"enum": ["Low", "Medium", "High"]},
+            "evidence": {"$ref": "#/$defs/strlist"}
+          }
+        }
+      }
+    },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["standard_queue", "destination_queue", "routing_reason"],
+      "properties": {
+        "standard_queue": {"enum": ["engineering", "incident_response", "billing", "product", "technical_support", "unassigned"]},
+        "destination_queue": {"enum": ["engineering", "incident_response", "billing", "product", "technical_support", "human_review_escalation"]},
+        "routing_reason": {"type": "string"}
+      }
+    },
+    "escalation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["flagged", "triggered_rules", "advisory_signals"],
+      "properties": {
+        "flagged": {"type": "boolean"},
+        "triggered_rules": {"type": "array", "items": {"$ref": "#/$defs/rulehit"}},
+        "advisory_signals": {"type": "array", "items": {"$ref": "#/$defs/rulehit"}}
+      }
+    },
+    "summary": {"type": "string", "minLength": 1},
+    "processing": {
+      "type": "object",
+      "required": ["model", "prompt_versions", "latency_ms", "workflow_version"],
+      "properties": {
+        "model": {"type": "string"},
+        "prompt_versions": {"type": "object"},
+        "latency_ms": {"type": "integer", "minimum": 0},
+        "workflow_version": {"type": "string"},
+        "llm_errors": {"$ref": "#/$defs/strlist"}
+      }
+    }
+  },
+  "$defs": {
+    "strlist": {"type": "array", "items": {"type": "string"}},
+    "rulehit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule", "detail"],
+      "properties": {
+        "rule": {"enum": ["low_confidence", "outage_language", "incident_category", "billing_amount_over_threshold", "llm_failure", "security_signal"]},
+        "detail": {"type": "string"}
+      }
+    }
+  }
+}

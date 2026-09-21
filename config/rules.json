@@ -1,0 +1,52 @@
+{
+  "_comment": "Single source of truth for routing + escalation. build_workflow.py inlines this into the 'Route & Escalate' Code node. Edit here, then rebuild.",
+  "workflow_version": "1.0.0",
+  "llm": {
+    "base_url": "https://api.groq.com/openai/v1",
+    "model": "llama-3.3-70b-versatile",
+    "temperature": 0
+  },
+  "prompts": {
+    "classification": "classification.v1",
+    "enrichment": "enrichment.v1",
+    "summary": "summary.v1"
+  },
+  "categories": ["Bug Report", "Feature Request", "Billing Issue", "Technical Question", "Incident/Outage"],
+  "priorities": ["Low", "Medium", "High"],
+  "queues": {
+    "engineering": "Engineering - product defects affecting one customer or feature",
+    "incident_response": "SRE / on-call - service-wide unavailability or degradation",
+    "billing": "Billing & Finance - invoices, charges, contract rates",
+    "product": "Product Management - feature requests and roadmap input",
+    "technical_support": "Solutions / Support Engineering - how-to, configuration, integration questions",
+    "human_review_escalation": "Human triage lead - anything flagged by an escalation rule or failed processing"
+  },
+  "category_to_queue": {
+    "Bug Report": "engineering",
+    "Incident/Outage": "incident_response",
+    "Billing Issue": "billing",
+    "Feature Request": "product",
+    "Technical Question": "technical_support"
+  },
+  "escalation_queue": "human_review_escalation",
+  "thresholds": {
+    "min_confidence": 0.70,
+    "billing_escalation_usd": 500,
+    "billing_threshold_basis": "any_amount",
+    "_billing_threshold_basis_options": "any_amount (chosen) = escalate a Billing Issue if any dollar amount in the message exceeds the threshold; discrepancy = only if (largest - smallest amount) exceeds it. 'Either' collapses to any_amount because the discrepancy can never exceed the largest amount. Message #3: $1,240 vs $980 -> escalates under any_amount, not under discrepancy ($260)."
+  },
+  "keywords": {
+    "_comment": "Matched case-insensitively on word boundaries against the raw message. Deliberately narrow: bare words like 'everyone' or 'all users' were left out because they appear in feature requests ('everyone on my team wants...').",
+    "outage_language": [
+      "outage", "down for all users", "down for everyone", "site is down", "service is down",
+      "not loading", "stopped loading", "won't load", "multiple users affected",
+      "nobody can", "no one can", "service unavailable"
+    ],
+    "security_signal": [
+      "401", "403", "unauthorized", "forbidden", "can't log in", "cannot log in",
+      "unable to log in", "locked out", "breach", "compromised", "suspicious login"
+    ]
+  },
+  "_security_signal_comment": "Access-failure terms only. A mere mention of SSO/login (e.g. a how-to question) is not a signal. Policy: raise priority to High and record the rule, but do not escalate on its own.",
+  "security_signal_policy": "raise_priority_only"
+}
