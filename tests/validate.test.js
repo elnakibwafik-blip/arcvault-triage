@@ -15,6 +15,12 @@ test('valid classification passes, confidence rounded', () => {
   assert.strictEqual(r.value.confidence, 0.92);
 });
 
+test('secondary_categories filtered to enum, primary and duplicates removed', () => {
+  const r = V.parseClassification(wrap({ category: 'Bug Report', secondary_categories: ['Bug Report', 'Feature Request', 'Feature Request', 'Sales'], priority: 'Low', confidence: 0.8 }));
+  assert.deepStrictEqual(r.value.secondary_categories, ['Feature Request']);
+  assert.deepStrictEqual(V.parseClassification(wrap({ category: 'Bug Report', priority: 'Low', confidence: 0.8 })).value.secondary_categories, []);
+});
+
 test('category outside enum fails', () => {
   const r = V.parseClassification(wrap({ category: 'Question', priority: 'High', confidence: 0.9 }));
   assert.ok(!r.ok);

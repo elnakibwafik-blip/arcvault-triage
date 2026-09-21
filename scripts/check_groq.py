@@ -11,6 +11,7 @@ reads the same prompt files).
 import argparse
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -27,9 +28,22 @@ def call(cfg, system, user):
         "response_format": {"type": "json_object"},
         "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
     }
+    if cfg.get("reasoning_effort"):
+        body["reasoning_effort"] = cfg["reasoning_effort"]
     t0 = time.time()
-    resp = post_json(cfg["base_url"] + "/chat/completions", body,
-                     {"Authorization": "Bearer " + os.environ["GROQ_API_KEY"]})
+    for attempt in range(4):
+        try:
+            resp = post_json(cfg["base_url"] + "/chat/completions", body,
+                             {"Authorization": "Bearer " + os.environ["GROQ_API_KEY"]})
+            break
+        except urllib.error.HTTPError as e:
+            if e.code != 429 or attempt == 3:
+                raise
+            m = re.search(r"try again in ([\d.]+)s", e.read().decode())
+            wait = float(m.group(1)) + 1 if m else 20
+            print(f"   (429 tokens-per-minute limit, waiting {wait:.0f}s)")
+            time.sleep(wait)
+            t0 = time.time()
     return json.loads(resp["choices"][0]["message"]["content"]), int((time.time() - t0) * 1000), resp.get("model")
 
 
@@ -38,14 +52,17 @@ def main():
     ap.add_argument("--edge", action="store_true")
     ap.add_argument("--only")
     ap.add_argument("--runs", type=int, default=1)
-    ap.add_argument("--cls", default="classification.v1")
-    ap.add_argument("--enr", default="enrichment.v1")
+    ap.add_argument("--cls", help="prompt file name, default from config/rules.json")
+    ap.add_argument("--enr", help="prompt file name, default from config/rules.json")
     args = ap.parse_args()
 
     load_env()
     if not os.environ.get("GROQ_API_KEY"):
         sys.exit("GROQ_API_KEY missing in .env")
-    cfg = load_json("config/rules.json")["llm"]
+    rules = load_json("config/rules.json")
+    cfg = rules["llm"]
+    args.cls = args.cls or rules["prompts"]["classification"]
+    args.enr = args.enr or rules["prompts"]["enrichment"]
     golden = load_json("tests/golden.json")
     cases = golden["samples"] + (golden["edge_cases"] if args.edge else [])
     if args.only:

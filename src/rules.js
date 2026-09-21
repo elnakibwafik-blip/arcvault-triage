@@ -51,6 +51,12 @@ function decide(input, RULES) {
     if (typeof c.confidence !== 'number' || c.confidence < t.min_confidence) {
       triggered.push({ rule: 'low_confidence', detail: `confidence ${c.confidence} < ${t.min_confidence}` });
     }
+    // LLM self-reported confidence stayed high (0.92) on a three-intent message,
+    // so multi-intent is detected from the structured field instead of trusting confidence.
+    const secondary = (c.secondary_categories || []).filter(x => x !== c.category);
+    if (RULES.escalate_multi_intent && secondary.length) {
+      triggered.push({ rule: 'multi_intent', detail: `also contains: ${secondary.join(', ')}; a human should split or re-route` });
+    }
     if (c.category === 'Incident/Outage') {
       triggered.push({ rule: 'incident_category', detail: 'category is Incident/Outage' });
     }

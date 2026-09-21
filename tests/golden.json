@@ -36,7 +36,7 @@
     {
       "id": "E1-multi-intent", "source": "email",
       "message": "Two things: our March invoice looks too high, and also the reports page throws an error when I filter by date. Oh and it'd be great to have a Slack integration.",
-      "expect": {"category": ["Billing Issue", "Bug Report"], "escalated": null, "note": "Several intents; I expect lower confidence, ideally < 0.70."}
+      "expect": {"category": ["Billing Issue", "Bug Report"], "escalated": true, "expected_rules": ["multi_intent"], "note": "Three separate asks. v1 returned confidence 0.92 and would have passed straight to billing; v2 detects secondary_categories and escalates via multi_intent."}
     },
     {
       "id": "E2-vague", "source": "web_form",
@@ -56,7 +56,7 @@
     {
       "id": "E5-angry-small-billing", "source": "support_portal",
       "message": "This is RIDICULOUS. You charged us $45 for a seat we removed last month. Fix it NOW or we cancel.",
-      "expect": {"category": ["Billing Issue"], "standard_queue": "billing", "escalated": false, "note": "Angry tone but under $500: should go to billing, not escalation."}
+      "expect": {"category": ["Billing Issue"], "priority": ["Low", "Medium"], "standard_queue": "billing", "escalated": false, "note": "Angry tone but under $500: should go to billing, not escalation, and tone alone should not make it High (v1 said High)."}
     },
     {
       "id": "E6-feature-sounds-like-bug", "source": "web_form",

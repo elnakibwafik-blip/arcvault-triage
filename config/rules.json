@@ -3,12 +3,14 @@
   "workflow_version": "1.0.0",
   "llm": {
     "base_url": "https://api.groq.com/openai/v1",
-    "model": "llama-3.3-70b-versatile",
-    "temperature": 0
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0,
+    "reasoning_effort": "low",
+    "_comment": "llama-3.3-70b-versatile returned model_not_found for a free-tier key (Sept 2026). gpt-oss-120b is the strongest model available on the free tier; reasoning_effort=low keeps latency and tokens down for a short classification task. Set reasoning_effort to null for non-reasoning models (e.g. Ollama)."
   },
   "prompts": {
-    "classification": "classification.v1",
-    "enrichment": "enrichment.v1",
+    "classification": "classification.v2",
+    "enrichment": "enrichment.v2",
     "summary": "summary.v1"
   },
   "categories": ["Bug Report", "Feature Request", "Billing Issue", "Technical Question", "Incident/Outage"],
@@ -29,6 +31,8 @@
     "Technical Question": "technical_support"
   },
   "escalation_queue": "human_review_escalation",
+  "escalate_multi_intent": true,
+  "_escalate_multi_intent_comment": "Escalate when the classifier reports a separate request in another category (secondary_categories non-empty). One ticket can't sit in two queues; a human splits it.",
   "thresholds": {
     "min_confidence": 0.70,
     "billing_escalation_usd": 500,

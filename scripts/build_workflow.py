@@ -75,6 +75,7 @@ def main():
         "llm_base_url": rules["llm"]["base_url"],
         "model": rules["llm"]["model"],
         "temperature": rules["llm"]["temperature"],
+        "reasoning_effort": rules["llm"].get("reasoning_effort"),
         "prompt_versions": pnames,
         "workflow_version": rules["workflow_version"],
         "webhook_site_url": os.environ.get("WEBHOOK_SITE_URL", "").rstrip("/"),
@@ -102,6 +103,7 @@ const fill = t => t.split('{{source}}').join(source).split('{{message}}').join(t
 const request = p => ({
   model: CTX.model,
   temperature: CTX.temperature,
+  ...(CTX.reasoning_effort ? { reasoning_effort: CTX.reasoning_effort } : {}),
   response_format: { type: 'json_object' },
   messages: [{ role: 'system', content: p.system }, { role: 'user', content: fill(p.user) }],
 });
@@ -178,6 +180,7 @@ return [{ json: {
   decision: d,
   sum_request: {
     model: b.ctx.model, temperature: b.ctx.temperature, response_format: { type: 'json_object' },
+    ...(b.ctx.reasoning_effort ? { reasoning_effort: b.ctx.reasoning_effort } : {}),
     messages: [{ role: 'system', content: SUMMARY_PROMPT.system }, { role: 'user', content: user }],
   },
 } }];
@@ -207,6 +210,7 @@ const record = {
   raw_message: b.raw_message,
   classification: {
     category: c ? c.category : null,
+    secondary_categories: c ? c.secondary_categories : [],
     priority: d.priority,
     llm_priority: c ? c.priority : null,
     priority_adjusted_by: d.priority_adjusted_by,

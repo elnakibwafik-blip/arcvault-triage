@@ -60,6 +60,13 @@ test('low confidence -> escalated, keeps standard queue', () => {
   assert.strictEqual(r.routing.standard_queue, 'engineering');
 });
 
+test('multi-intent -> escalated even with high confidence', () => {
+  const c = { ...cls('Billing Issue', 'Medium', 0.92), secondary_categories: ['Bug Report', 'Feature Request'] };
+  const r = decide({ raw_message: 'invoice too high and reports page errors', classification: c }, RULES);
+  assert.deepStrictEqual(rules(r), ['multi_intent']);
+  assert.strictEqual(r.routing.standard_queue, 'billing');
+});
+
 test('confidence exactly 0.70 is not low', () => {
   const r = decide({ raw_message: 'x', classification: cls('Bug Report', 'Medium', 0.7) }, RULES);
   assert.strictEqual(r.escalation.flagged, false);

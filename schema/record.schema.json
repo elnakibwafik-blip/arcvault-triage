@@ -13,9 +13,10 @@
     "classification": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["category", "priority", "llm_priority", "priority_adjusted_by", "confidence", "rationale"],
+      "required": ["category", "secondary_categories", "priority", "llm_priority", "priority_adjusted_by", "confidence", "rationale"],
       "properties": {
         "category": {"enum": ["Bug Report", "Feature Request", "Billing Issue", "Technical Question", "Incident/Outage", null]},
+        "secondary_categories": {"type": "array", "items": {"enum": ["Bug Report", "Feature Request", "Billing Issue", "Technical Question", "Incident/Outage"]}},
         "priority": {"enum": ["Low", "Medium", "High"], "description": "Final priority after deterministic adjustments"},
         "llm_priority": {"enum": ["Low", "Medium", "High", null], "description": "Priority as returned by the LLM"},
         "priority_adjusted_by": {"type": ["string", "null"]},
@@ -95,7 +96,7 @@
       "additionalProperties": false,
       "required": ["rule", "detail"],
       "properties": {
-        "rule": {"enum": ["low_confidence", "outage_language", "incident_category", "billing_amount_over_threshold", "llm_failure", "security_signal"]},
+        "rule": {"enum": ["low_confidence", "multi_intent", "outage_language", "incident_category", "billing_amount_over_threshold", "llm_failure", "security_signal"]},
         "detail": {"type": "string"}
       }
     }

@@ -33,9 +33,15 @@ function parseClassification(resp) {
   const conf = typeof v.confidence === 'string' ? parseFloat(v.confidence) : v.confidence;
   if (typeof conf !== 'number' || isNaN(conf) || conf < 0 || conf > 1) errs.push('confidence not a number in [0,1]: ' + JSON.stringify(v.confidence));
   if (errs.length) return { ok: false, error: 'classification schema: ' + errs.join('; ') };
+  // Tolerant: unknown values and the primary category are dropped rather than failing the record.
+  const secondary = (Array.isArray(v.secondary_categories) ? v.secondary_categories : [])
+    .filter((x, i, a) => CATEGORIES.includes(x) && x !== v.category && a.indexOf(x) === i);
   return {
     ok: true, model: r.model,
-    value: { category: v.category, priority: v.priority, confidence: Math.round(conf * 100) / 100, rationale: String(v.rationale || '') },
+    value: {
+      category: v.category, secondary_categories: secondary, priority: v.priority,
+      confidence: Math.round(conf * 100) / 100, rationale: String(v.rationale || ''),
+    },
   };
 }
 
