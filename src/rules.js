@@ -85,7 +85,10 @@ function decide(input, RULES) {
 
   const securityHits = matchPhrases(text, RULES.keywords.security_signal);
   if (securityHits.length) {
-    advisory.push({ rule: 'security_signal', detail: 'matched: ' + securityHits.join(', ') + '; priority raised to High, not escalated on its own' });
+    const effect = priority === 'High'
+      ? 'priority already High, no change'
+      : `priority raised from ${priority} to High`;
+    advisory.push({ rule: 'security_signal', detail: `matched: ${securityHits.join(', ')}; ${effect}; not escalated on its own` });
     if (priority !== 'High') {
       priorityAdjustedBy = 'security_signal';
       priority = 'High';

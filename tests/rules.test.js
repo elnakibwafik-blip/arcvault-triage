@@ -18,6 +18,14 @@ test('#1 403 login -> engineering, priority raised, not escalated', () => {
   assert.strictEqual(r.priority, 'High');
   assert.strictEqual(r.priority_adjusted_by, 'security_signal');
   assert.strictEqual(r.escalation.flagged, false);
+  assert.match(r.escalation.advisory_signals[0].detail, /raised from Medium to High/);
+});
+
+test('#1 when LLM already said High, detail does not claim a raise', () => {
+  const r = decide({ raw_message: 'keep getting a 403 error', classification: cls('Bug Report', 'High', 0.94) }, RULES);
+  assert.strictEqual(r.priority_adjusted_by, null);
+  assert.match(r.escalation.advisory_signals[0].detail, /already High, no change/);
+  assert.doesNotMatch(r.escalation.advisory_signals[0].detail, /raised/);
 });
 
 test('#2 feature request -> product', () => {

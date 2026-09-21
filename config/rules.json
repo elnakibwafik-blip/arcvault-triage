@@ -1,6 +1,6 @@
 {
   "_comment": "Single source of truth for routing + escalation. build_workflow.py inlines this into the 'Route & Escalate' Code node. Edit here, then rebuild.",
-  "workflow_version": "1.0.0",
+  "workflow_version": "1.0.1",
   "llm": {
     "base_url": "https://api.groq.com/openai/v1",
     "model": "openai/gpt-oss-120b",
