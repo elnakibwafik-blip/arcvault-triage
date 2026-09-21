@@ -1,4 +1,4 @@
-"""Evaluate the live workflow against tests/golden.json and check run-to-run consistency.
+﻿"""Evaluate the live workflow against tests/golden.json and check run-to-run consistency.
 
     python scripts/eval.py --runs 3             # 5 samples x 3 runs + edge cases x 1
     python scripts/eval.py --runs 3 --edge-runs 0
@@ -55,7 +55,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs", type=int, default=3, help="runs over the 5 brief samples")
     ap.add_argument("--edge-runs", type=int, default=1, help="runs over the edge cases")
-    ap.add_argument("--delay", type=float, default=6.0)
+    ap.add_argument("--delay", type=float, default=45.0)
     args = ap.parse_args()
 
     load_env()
@@ -92,7 +92,7 @@ def main():
         }
         confs = [r["classification"]["confidence"] for r in recs]
         changed = [k for k, v in fields.items() if len(v) > 1]
-        consistency.append(f"| {cid} | {len(recs)} | {min(confs)}–{max(confs)} | "
+        consistency.append(f"| {cid} | {len(recs)} | {min(confs)}â€“{max(confs)} | "
                            f"{'stable' if not changed else 'CHANGED: ' + ', '.join(changed)} |")
 
     passed = sum(1 for *_, f in results if not f)

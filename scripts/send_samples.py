@@ -1,4 +1,4 @@
-"""POST the sample messages to the live n8n webhook, one at a time, like real arrivals.
+﻿"""POST the sample messages to the live n8n webhook, one at a time, like real arrivals.
 
 Every returned record is printed and appended to output/records.jsonl.
 This is also the demo script.
@@ -43,8 +43,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--edge", action="store_true", help="include edge cases")
     ap.add_argument("--only", help="id prefix, e.g. S3 or E2")
-    ap.add_argument("--delay", type=float, default=6.0,
-                    help="seconds between messages (Groq free-tier tokens-per-minute limit)")
+    ap.add_argument("--delay", type=float, default=45.0,
+                    help="seconds between messages (Groq free tier: 8k tokens/min, ~6k per message)")
     ap.add_argument("--quiet", action="store_true", help="one line per record instead of full JSON")
     args = ap.parse_args()
 
