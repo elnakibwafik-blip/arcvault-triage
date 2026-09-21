@@ -83,7 +83,7 @@
         "method": "POST",
         "url": "={{ $('Normalize').first().json.ctx.llm_base_url }}/chat/completions",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
+        "genericAuthType": "httpBearerAuth",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify($json.cls_request) }}",
@@ -92,7 +92,7 @@
         }
       },
       "credentials": {
-        "httpHeaderAuth": {
+        "httpBearerAuth": {
           "name": "Groq API"
         }
       },
@@ -131,7 +131,7 @@
         "method": "POST",
         "url": "={{ $('Normalize').first().json.ctx.llm_base_url }}/chat/completions",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
+        "genericAuthType": "httpBearerAuth",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify($json.enr_request) }}",
@@ -140,7 +140,7 @@
         }
       },
       "credentials": {
-        "httpHeaderAuth": {
+        "httpBearerAuth": {
           "name": "Groq API"
         }
       },
@@ -194,7 +194,7 @@
         "method": "POST",
         "url": "={{ $('Normalize').first().json.ctx.llm_base_url }}/chat/completions",
         "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
+        "genericAuthType": "httpBearerAuth",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify($json.sum_request) }}",
@@ -203,7 +203,7 @@
         }
       },
       "credentials": {
-        "httpHeaderAuth": {
+        "httpBearerAuth": {
           "name": "Groq API"
         }
       },

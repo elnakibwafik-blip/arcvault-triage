@@ -43,10 +43,10 @@ The LLM classifies, extracts and summarises. Code decides routing and escalation
    ```
 
 3. **In n8n Cloud**
-   1. *Overview -> Credentials -> Create -> Header Auth.* Name it exactly `Groq API`. Header **Name** `Authorization`, **Value** `Bearer <your Groq key>`.
-   2. *Create workflow -> ... menu -> Import from File ->* `n8n/workflow.arcvault.json`. If you are re-importing, delete or overwrite the old copy first; two active workflows can't share a webhook path.
-   3. Open each of **Classify (LLM)**, **Enrich (LLM)** and **Summarize (LLM)** and select the `Groq API` credential.
-   4. Save, then toggle **Active** (top right).
+   1. *Create workflow -> ... menu -> Import from File ->* `n8n/workflow.arcvault.json`. If you are re-importing, delete or unpublish the old copy first; two active workflows can't share a webhook path.
+   2. Open **Classify (LLM)**. Authentication is already `Generic Credential Type` / `Bearer Auth`. In the **Bearer Auth** credential field, choose *Create new credential* and paste the raw Groq key (`gsk_...`, without the word "Bearer") as the Token.
+   3. Open **Enrich (LLM)** and **Summarize (LLM)** and select the same credential in their **Bearer Auth** field. Any LLM node without a credential fails with `Credentials not found`, and the record is escalated as `llm_failure`.
+   4. **Save**, then **Publish** (n8n 2.x) or toggle **Active** (n8n 1.x), top right. After later edits, publish again; saving only updates the draft.
    5. Open the **Webhook** node, switch to **Production URL**, and copy it into `.env` as `N8N_WEBHOOK_URL`. It must contain `/webhook/`, not `/webhook-test/`.
 
 4. **Send the 5 sample messages**

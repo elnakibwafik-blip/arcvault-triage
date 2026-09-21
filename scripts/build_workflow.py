@@ -14,7 +14,7 @@ import uuid
 from common import ROOT, load_env, load_json, load_prompt
 
 WEBHOOK_PATH = "arcvault-intake"
-CREDENTIAL_NAME = "Groq API"  # n8n Header Auth credential: Authorization: Bearer <key>
+CREDENTIAL_NAME = "Groq API"  # n8n Bearer Auth credential; token = raw Groq key
 
 
 def js_lib(name):
@@ -45,13 +45,13 @@ def llm_node(name, request_field, pos, notes):
             "method": "POST",
             "url": "={{ $('Normalize').first().json.ctx.llm_base_url }}/chat/completions",
             "authentication": "genericCredentialType",
-            "genericAuthType": "httpHeaderAuth",
+            "genericAuthType": "httpBearerAuth",
             "sendBody": True,
             "specifyBody": "json",
             "jsonBody": "={{ JSON.stringify($json." + request_field + ") }}",
             "options": {"timeout": 30000},
         },
-        "credentials": {"httpHeaderAuth": {"name": CREDENTIAL_NAME}},
+        "credentials": {"httpBearerAuth": {"name": CREDENTIAL_NAME}},
         # Transport retry: Groq JSON mode returns HTTP 400 when the model emits
         # invalid JSON, so this retry also covers the "invalid JSON" case.
         "retryOnFail": True, "maxTries": 2, "waitBetweenTries": 2000,
