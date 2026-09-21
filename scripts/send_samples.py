@@ -1,4 +1,4 @@
-﻿"""POST the sample messages to the live n8n webhook, one at a time, like real arrivals.
+"""POST the sample messages to the live n8n webhook, one at a time, like real arrivals.
 
 Every returned record is printed and appended to output/records.jsonl.
 This is also the demo script.
