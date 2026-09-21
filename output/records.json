@@ -1,7 +1,7 @@
 [
   {
-    "record_id": "0c388a01-974f-4915-923f-4bd79e1d4f2b",
-    "received_at": "2026-09-21T19:30:21.623Z",
+    "record_id": "23ad2fd8-e074-475c-b678-7f3c703c5550",
+    "received_at": "2026-09-21T20:11:58.087Z",
     "source": "email",
     "raw_message": "Hi, I tried logging in this morning and keep getting a 403 error. My account is arcvault.io/user/jsmith. This started after your update last Tuesday.",
     "classification": {
@@ -14,7 +14,7 @@
       "rationale": "'tried logging in... keep getting a 403 error' for a single account"
     },
     "enrichment": {
-      "core_issue": "The customer tried logging in and keeps getting a 403 error, preventing access.",
+      "core_issue": "The customer cannot log in and receives a 403 error.",
       "identifiers": {
         "account_ids": [
           "arcvault.io/user/jsmith"
@@ -37,7 +37,7 @@
         "level": "High",
         "evidence": [
           "403 error",
-          "tried logging in"
+          "logging in"
         ]
       }
     },
@@ -52,11 +52,11 @@
       "advisory_signals": [
         {
           "rule": "security_signal",
-          "detail": "matched: 403; priority raised to High, not escalated on its own"
+          "detail": "matched: 403; priority already High, no change; not escalated on its own"
         }
       ]
     },
-    "summary": "The customer reports a 403 error when trying to log in to account arcvault.io/user/jsmith, which began after the update last Tuesday. This blocks access to the account and is marked as high priority. Next step: engineering should investigate the authentication flow for this account and the recent update impact.",
+    "summary": "The customer cannot log in and receives a 403 error on account arcvault.io/user/jsmith, which started after the update last Tuesday. This is a high‑priority issue affecting access to the service. Next step: engineering should investigate the authentication failure linked to the recent update.",
     "processing": {
       "model": "openai/gpt-oss-120b",
       "prompt_versions": {
@@ -64,14 +64,14 @@
         "enrichment": "enrichment.v2",
         "summary": "summary.v1"
       },
-      "latency_ms": 2352,
-      "workflow_version": "1.0.0",
+      "latency_ms": 1889,
+      "workflow_version": "1.0.1",
       "llm_errors": []
     }
   },
   {
-    "record_id": "6fa75f80-f7e4-4431-bda0-41567f0f8b60",
-    "received_at": "2026-09-21T19:31:11.315Z",
+    "record_id": "6733d2e9-74b4-44ab-8365-a54763be45fe",
+    "received_at": "2026-09-21T20:12:47.123Z",
     "source": "web_form",
     "raw_message": "We'd love to see a bulk export feature for our audit logs. We're a compliance-heavy org and this would save us hours every month.",
     "classification": {
@@ -124,14 +124,14 @@
         "enrichment": "enrichment.v2",
         "summary": "summary.v1"
       },
-      "latency_ms": 1716,
-      "workflow_version": "1.0.0",
+      "latency_ms": 2284,
+      "workflow_version": "1.0.1",
       "llm_errors": []
     }
   },
   {
-    "record_id": "304a5b76-f671-4990-9940-6be2b64181f8",
-    "received_at": "2026-09-21T19:32:00.193Z",
+    "record_id": "c2c33051-de2d-4f41-9700-140425146381",
+    "received_at": "2026-09-21T20:13:36.646Z",
     "source": "support_portal",
     "raw_message": "Invoice #8821 shows a charge of $1,240 but our contract rate is $980/month. Can someone look into this?",
     "classification": {
@@ -183,7 +183,7 @@
       ],
       "advisory_signals": []
     },
-    "summary": "Invoice #8821 shows a charge of $1,240 but the contract rate is $980/month, a $260 discrepancy. This billing amount exceeds the $500 escalation threshold, so it requires immediate human review. Action: assign to a billing specialist to investigate and adjust the invoice as needed.",
+    "summary": "Invoice #8821 shows a charge of $1,240 but the contract rate is $980/month, a $260 discrepancy. This billing difference exceeds the $500 escalation threshold, so it requires immediate human review. Action: assign to a billing specialist to investigate and adjust the invoice as needed.",
     "processing": {
       "model": "openai/gpt-oss-120b",
       "prompt_versions": {
@@ -191,14 +191,14 @@
         "enrichment": "enrichment.v2",
         "summary": "summary.v1"
       },
-      "latency_ms": 1712,
-      "workflow_version": "1.0.0",
+      "latency_ms": 2347,
+      "workflow_version": "1.0.1",
       "llm_errors": []
     }
   },
   {
-    "record_id": "5f5b4c41-911e-4b2d-b137-e4b16022f9d1",
-    "received_at": "2026-09-21T19:32:49.126Z",
+    "record_id": "560750eb-a182-42b5-8243-8e8de3be3631",
+    "received_at": "2026-09-21T20:14:26.003Z",
     "source": "email",
     "raw_message": "I'm not sure if this is the right place to ask, but is there a way to set up SSO with Okta? We're evaluating switching our auth provider.",
     "classification": {
@@ -228,8 +228,8 @@
       "urgency_signal": {
         "level": "Low",
         "evidence": [
-          "is there a way to set up SSO with Okta?",
-          "We're evaluating switching our auth provider."
+          "is there a way to set up SSO with Okta",
+          "evaluating switching our auth provider"
         ]
       }
     },
@@ -243,7 +243,7 @@
       "triggered_rules": [],
       "advisory_signals": []
     },
-    "summary": "The customer asks whether SSO with Okta can be set up for their organization. This is a low‑priority technical question with no reported service impact. Next step: respond with documentation and steps for configuring Okta SSO in ArcVault.",
+    "summary": "The customer asks whether SSO with Okta can be set up for their organization. This is a low‑priority technical question about authentication options. Next step: provide the standard documentation and steps for configuring Okta SSO in ArcVault.",
     "processing": {
       "model": "openai/gpt-oss-120b",
       "prompt_versions": {
@@ -251,14 +251,14 @@
         "enrichment": "enrichment.v2",
         "summary": "summary.v1"
       },
-      "latency_ms": 1964,
-      "workflow_version": "1.0.0",
+      "latency_ms": 1935,
+      "workflow_version": "1.0.1",
       "llm_errors": []
     }
   },
   {
-    "record_id": "f247cf0b-8497-4570-9f6c-ac4c7abdf6cb",
-    "received_at": "2026-09-21T19:33:38.183Z",
+    "record_id": "11e817f0-9e39-40ad-8691-29c25fa9515c",
+    "received_at": "2026-09-21T20:15:14.992Z",
     "source": "web_form",
     "raw_message": "Your dashboard stopped loading for us around 2pm EST. Checked our end — it's definitely on yours. Multiple users affected.",
     "classification": {
@@ -313,7 +313,7 @@
       ],
       "advisory_signals": []
     },
-    "summary": "The customer reports that the dashboard stopped loading around 2pm EST and multiple users are affected. This is a high‑priority incident affecting several users. Escalate to human review for immediate investigation of the dashboard outage.",
+    "summary": "The customer reports that the dashboard stopped loading around 2pm EST and multiple users are affected. This is a high‑priority incident affecting multiple users. Escalate to human review for immediate investigation of the dashboard outage.",
     "processing": {
       "model": "openai/gpt-oss-120b",
       "prompt_versions": {
@@ -321,8 +321,8 @@
         "enrichment": "enrichment.v2",
         "summary": "summary.v1"
       },
-      "latency_ms": 1795,
-      "workflow_version": "1.0.0",
+      "latency_ms": 2001,
+      "workflow_version": "1.0.1",
       "llm_errors": []
     }
   }
