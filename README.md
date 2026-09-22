@@ -12,6 +12,8 @@ The LLM classifies, extracts and summarises. Code decides routing and escalation
 
 ## Deliverables
 
+[SUBMISSION.md](SUBMISSION.md) maps each item in section 4 of the brief to its file. `python scripts/build_submission.py` packages them as PDFs + JSON in `submission/` (plus `ArcVault_Submission.zip` for emailing).
+
 | Brief item | Where |
 |---|---|
 | Working workflow (exported JSON) | [n8n/workflow.arcvault.json](n8n/workflow.arcvault.json), screenshots listed in [docs/SCREENSHOTS.md](docs/SCREENSHOTS.md) |

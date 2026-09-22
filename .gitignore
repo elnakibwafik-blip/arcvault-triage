@@ -4,3 +4,4 @@ __pycache__/
 .venv/
 ~$*.docx
 docs/screenshots/html/
+submission/*.zip
