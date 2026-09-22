@@ -12,16 +12,17 @@ These are rendered by `scripts/render_screenshots.py` from `output/records.json`
 
 ![overview](screenshots/00-overview-all-samples.png)
 
-## B. n8n UI (take by hand, logged in to n8n Cloud)
+## B. n8n UI (captured in n8n Cloud)
 
-These show that the workflow actually ran in n8n. They need a logged-in browser session, so I couldn't generate them. Save them into `docs/screenshots/` with these names.
+These show that the workflow actually ran in n8n. They were taken by hand in a logged-in n8n Cloud session.
 
-| # | File | What to capture |
-|---|---|---|
-| 1 | `n8n-01-canvas.png` | Whole workflow canvas, zoomed to fit, node notes visible |
-| 2 | `n8n-02-executions.png` | Executions list showing the successful runs |
-| 3 | `n8n-03-sample3-route.png` | Sample #3 execution, **Route & Escalate** node output in JSON view (`decision.escalation.triggered_rules`) |
-| 4 | `n8n-04-sample5-record.png` | Sample #5 execution, **Assemble Record** node output |
-| 5 | `n8n-05-webhook-site.png` | Webhook.site request list showing the queue paths (`/human_review_escalation`, `/engineering`, ...) |
+| File | Shows |
+|---|---|
+| [workflow.png](screenshots/workflow.png) | The published workflow canvas: all 12 nodes, including the empty-message branch from **Has Text?** |
+| [n8n-02-executions.png](screenshots/n8n-02-executions.png) | Executions list: successful production runs, each about 4 s, with every node green |
+| [n8n-03-sample3-route.png](screenshots/n8n-03-sample3-route.png) | Sample #3, **Route & Escalate** output: `standard_queue: billing`, `destination_queue: human_review_escalation`, `triggered_rules: billing_amount_over_threshold` |
+| [n8n-04a-sample5-record.png](screenshots/n8n-04a-sample5-record.png), [n8n-04b-sample5-record.png](screenshots/n8n-04b-sample5-record.png) | Sample #5, **Assemble Record** output in two parts. `record_id` `1cd7d42b-…` is the same record as #5 in `output/records.json`. |
 
-Tip: in n8n's output panel, switch to **JSON** view; it fits more on screen.
+![canvas](screenshots/workflow.png)
+
+Not captured: the Webhook.site request list. Its URL is private to this setup, and the records it received are the same ones in `output/records.json`.
