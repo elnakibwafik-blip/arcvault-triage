@@ -39,9 +39,9 @@ The LLM classifies, extracts and summarises. Code decides routing and escalation
    - `cp .env.example .env` and fill in `GROQ_API_KEY` and `WEBHOOK_SITE_URL`.
    - `pip install -r requirements.txt`
 
-2. **Build the workflow JSON.** This bakes in the prompts, the rules and your Webhook.site URL:
+2. **Build the workflow JSON.** `--local` bakes in your own Webhook.site URL; without it the file keeps the placeholder `https://webhook.site/YOUR-UNIQUE-ID`, which is what's committed here:
    ```
-   python scripts/build_workflow.py
+   python scripts/build_workflow.py --local
    ```
 
 3. **In n8n Cloud**
